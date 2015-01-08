@@ -1,5 +1,11 @@
 Google Cloud
 
+Installation from an archive (.zip) on Windows
+https://cloud.google.com/sdk/#install-archive
+Python 2.X only that is 2.6 greater, set the CLOUDSDK_PYTHON environment variable
+https://www.python.org/downloads/release/python-279/
+CLOUDSDK_PYTHON=C:\Python27\python.exe
+
 instance: open a browser window
 sudo apt-get install apache2
 $ echo '<!doctype html><html><body><h1>Hello World!</h1></body></html>' | sudo tee /var/www/html/index.ht
