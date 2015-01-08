@@ -1,5 +1,9 @@
 Google Cloud
 
+The Cloud SDK for Java requires Java 1.7+ and Python 2.7.x.
+https://cloud.google.com/sdk/#install-cygwin
+
+BLOCKED
 Installation from an archive (.zip) on Windows
 https://cloud.google.com/sdk/#install-archive
 Python 2.X only that is 2.6 greater, set the CLOUDSDK_PYTHON environment variable
@@ -45,3 +49,5 @@ CREATE TABLE DailyBrokerRankingReport (
 );
 show tables;
 
+
+mvn archetype:generate -Dappengine-version=1.9.17 -Dapplication-id=third-node-814 Dfilter=com.google.appengine.archetypes:
