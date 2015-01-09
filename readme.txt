@@ -7,8 +7,13 @@ sudo apt-get install apache2
 $ echo '<!doctype html><html><body><h1>Hello World!</h1></body></html>' | sudo tee /var/www/html/index.ht
 http://130.211.156.28/
 
+/var/lib/tomcat7/webapps
 sudo service tomcat7 start
 sudo service tomcat7 stop
+
+apache2
+/var/www/html
+sudo /etc/init.d/apache2 stop
 
 Get Glassfish Zip file
 wget download.java.net/glassfish/4.0/release/glassfish-4.0.zip
