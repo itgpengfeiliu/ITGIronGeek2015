@@ -17,8 +17,13 @@ sudo unzip glassfish-4.0.zip -d /opt
 
 PATH=$PATH:/opt/glassfish4/bin
 sudo chmod -R 777 domains 
+asadmin start-domain
+asadmin enable-secure-admin
+asadmin change-admin-password
+admin
+lpf123fpl
 asadmin restart-domain
-asadmin stop-domain
+asadmin deploy hello.war
 
 put war file in
 /opt/glassfish4/glassfish/domains/domain1/applications
