@@ -57,6 +57,10 @@ lpf123fpl
 asadmin restart-domain
 asadmin deploy hello.war
 
+glassfish4\glassfish\domains\domain1\config
+<network-listener port="9999" protocol="http-listener-1" 
+
+
 put war file in
 /opt/glassfish4/glassfish/domains/domain1/applications
 
