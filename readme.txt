@@ -1,14 +1,6 @@
 Google Cloud
 
 The Cloud SDK for Java requires Java 1.7+ and Python 2.7.x.
-https://cloud.google.com/sdk/#install-cygwin
-
-BLOCKED
-Installation from an archive (.zip) on Windows
-https://cloud.google.com/sdk/#install-archive
-Python 2.X only that is 2.6 greater, set the CLOUDSDK_PYTHON environment variable
-https://www.python.org/downloads/release/python-279/
-CLOUDSDK_PYTHON=C:\Python27\python.exe
 
 instance: open a browser window
 sudo apt-get install apache2
@@ -22,11 +14,20 @@ Get Glassfish Zip file
 wget download.java.net/glassfish/4.0/release/glassfish-4.0.zip
 sudo apt-get install unzip
 sudo unzip glassfish-4.0.zip -d /opt
-export PATH=/opt/glassfish4/bin:$PATH
 
+PATH=$PATH:/opt/glassfish4/bin
+sudo chmod -R 777 domains 
+asadmin restart-domain
+asadmin stop-domain
 
-Cloud SDK>gcloud compute copy-files att.pdf instance-1:/home/pfliu2010_gmail_com --zone us-central1-f
-Cloud SDK>gcloud compute copy-files att.pdf instance-1:/home/pfliu2010_gmail_com --zone us-central1-f
+put war file in
+/opt/glassfish4/glassfish/domains/domain1/applications
+
+asadmin deploy hello.war
+
+transfer files:
+C:\Program Files\Google\Cloud SDK
+Cloud SDK>gcloud compute copy-files helloworld.war instance-1:/home/lpf66fpl --zone us-central1-f
 
 
 MySQL
