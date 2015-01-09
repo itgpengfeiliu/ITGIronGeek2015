@@ -11,6 +11,33 @@ http://130.211.156.28/
 sudo service tomcat7 start
 sudo service tomcat7 stop
 
+Ubuntu 14.04 LTS, in Amazon EC2. The following steps resolved this issue for me:
+
+1. Edit server.xml and change port="8080" to "80"
+sudo vi /var/lib/tomcat7/conf/server.xml
+2. Edit tomcat7 file
+
+sudo vi /etc/default/tomcat7
+uncomment and change #AUTHBIND=no to yes
+
+3. Install authbind
+
+sudo apt-get install authbind
+4. Run the following commands to provide tomcat7 read+execute on port 80.
+
+sudo touch /etc/authbind/byport/80
+sudo chmod 500 /etc/authbind/byport/80
+sudo chown tomcat7 /etc/authbind/byport/80
+5. Restart tomcat:
+
+sudo /etc/init.d/tomcat7 restart
+
+
+
+
+
+
+
 apache2
 /var/www/html
 sudo /etc/init.d/apache2 stop
