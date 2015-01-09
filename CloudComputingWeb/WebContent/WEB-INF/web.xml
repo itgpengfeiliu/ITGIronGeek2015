@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+  <servlet>
+    <servlet-name>ReportServlet</servlet-name>
+    <servlet-class>itg.opt.irongeek.ReportServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReportServlet</servlet-name>
+    <url-pattern>/report</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>SourceDataServlet</servlet-name>
+    <servlet-class>itg.opt.irongeek.SourceDataServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SourceDataServlet</servlet-name>
+    <url-pattern>/data</url-pattern>
+  </servlet-mapping>
+</web-app>
