@@ -2,6 +2,8 @@ Google Cloud
 gcloud compute copy-files cloudcomputingapp.jar instance-2:/home/lpf66fpl --zone us-central1-f
 
 sudo apt-get update
+sudo apt-get install default-jre
+sudo apt-get install default-jdk
 sudo apt-get install openjdk-7-jre
 sudo apt-get install openjdk-7-jdk
 sudo update-alternatives --config java
