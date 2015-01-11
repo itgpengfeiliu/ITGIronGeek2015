@@ -11,9 +11,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Map;
@@ -27,20 +31,32 @@ import com.smartxls.RangeStyle;
 import com.smartxls.WorkBook;
 
 public class MTCreateReportThreadPool {
-	
+	// gcloud compute copy-files CloudComputingWeb.war instance-1:/home/lpf66fpl --zone us-central1-f
 	private String csvFileName = "IronGeekCloudInputData.csv";
-	private String reportFolder = "";
 	private String reportFileName = "IronGeekCloudReport.xlsx";
 	
-	private HashMap<BrokerTradeDateSideKey, Double> brokerTradingSummeryMapAll = new HashMap<BrokerTradeDateSideKey, Double>();
+	private HashMap<BrokerTradeDateSideKey, Double> brokerTradingSummeryMapAll;
 	
-	private HashMap<BrokerTradeDateKey, Double> brokerRankingMap = new HashMap<BrokerTradeDateKey, Double>();
+	private HashMap<BrokerTradeDateKey, Double> brokerRankingMap;
 	
+//	public static void main(String[] args) {
+//		if(args.length == 0) {
+//			MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool();
+//			mtCRThreadPool.loadFile();
+//		}
+//		else {
+//			MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool(args[0], args[1]);
+//			mtCRThreadPool.loadFile();
+//		}
+//		
+//	}
 	
-	public MTCreateReportThreadPool(String csvFileName, String reportFolder, String reportFileName) {
-		this.csvFileName = csvFileName;
-		this.reportFolder = reportFolder;
-		this.reportFileName = reportFileName;
+	public MTCreateReportThreadPool(String csvFile, String reportFile) {
+		this.csvFileName = csvFile;
+		this.reportFileName = reportFile;
+	}
+	
+	public MTCreateReportThreadPool() {
 	}
 	
 	public void loadFile() {
@@ -48,7 +64,7 @@ public class MTCreateReportThreadPool {
 		for(int i = 0; i < 10; ++ i){
 			CreateReportThread cr;
 			try {
-				cr = new CreateReportThread(csvFileName, i); // , i * 1000 + 1, i * 1000 + 1001
+				cr = new CreateReportThread(this.csvFileName, i); // , i * 1000 + 1, i * 1000 + 1001
 				Thread th = new Thread(cr);
 				allThread.add(th);
 				th.start();
@@ -104,7 +120,11 @@ public class MTCreateReportThreadPool {
 	        workBook.setColWidth(12, 20*256);
 	        workBook.setColWidth(13, 20*256);
 	        
+	        System.out.println("prepare to print report 1, total rows : " + CreateReportThread.fileRows);
 	        for (int j=0; j<CreateReportThread.fileRows; j++) {
+	        	if (j % 10000 == 0) {
+	        		System.out.println("print report 1 on row : " + j);
+	        	}
 	        	sheet1RowCount++;
 	        	workBook.setText(sheet1RowCount, 0, CreateReportThread.symbol[j]);
 				workBook.setNumber(sheet1RowCount, 1, CreateReportThread.shares[j]);
@@ -120,6 +140,10 @@ public class MTCreateReportThreadPool {
 				workBook.setNumber(sheet1RowCount, 12, CreateReportThread.netRealizedGainOpenPriceAll[j]);
 				workBook.setNumber(sheet1RowCount, 13, CreateReportThread.netRealizedGainClosePriceAll[j]);
 	        }
+	        System.out.println("report 1 print done");
+	        
+	        
+	        brokerTradingSummeryMapAll = new HashMap<BrokerTradeDateSideKey, Double>();
 	        
 	        for (int x = 0; x < CreateReportThread.brokerTradingSummeryMapList.size(); x++)
 	        {
@@ -142,6 +166,7 @@ public class MTCreateReportThreadPool {
 			    }
 	        	
 	        } 
+	        System.out.println("prepare to print report 2, broker trading summary report, total rows : " + brokerTradingSummeryMapAll.size());
 	        
 	        int sheet2Count = 0;
 			workBook.insertSheets(1, 1);
@@ -153,7 +178,7 @@ public class MTCreateReportThreadPool {
 			workBook.setText(sheet2Count, 0, "Broker");
 			workBook.setText(sheet2Count, 1, "Trade Date");
 			workBook.setText(sheet2Count, 2, "Side");
-			workBook.setText(sheet2Count, 3, "Total Traded Value");
+			workBook.setText(sheet2Count, 3, "Total Traded Value (in Millions)");
 			
 			rangeStyle = workBook.getRangeStyle(0, 0, 1, 3);
             rangeStyle.setFontBold(true);
@@ -175,44 +200,52 @@ public class MTCreateReportThreadPool {
 		        workBook.setText(sheet2Count, 0,  btdKey.getBroker());
 		        workBook.setText(sheet2Count, 1,  format.format(btdKey.getTradeDate()));
 		        workBook.setText(sheet2Count, 2,  btdKey.getSide());
-		        workBook.setNumber(sheet2Count, 3, (Double) pairs.getValue());
+		        workBook.setNumber(sheet2Count, 3, (Double) pairs.getValue() / 1000000);
 		        //it.remove(); // avoids a ConcurrentModificationException
 		    }
-		    
-		    
+		    System.out.println("broker trading summary report done");
+	        
+		    brokerRankingMap = new HashMap<BrokerTradeDateKey, Double>();
 		    Iterator itMT = brokerTradingSummeryMapAll.entrySet().iterator();
 		    while (itMT.hasNext()) {
 		    	Map.Entry pairs = (Map.Entry)itMT.next();
 		        BrokerTradeDateSideKey tmpKey = (BrokerTradeDateSideKey) pairs.getKey();
 		        BrokerTradeDateKey rKey = new BrokerTradeDateKey(tmpKey.getBroker(), tmpKey.getTradeDate());
+		        //System.out.println("... " + tmpKey.getBroker() + " , " + tmpKey.getSide());
 		        double tmpValue = 0;
-		        if (tmpKey.getSide() == "buy") {
+		        if (tmpKey.getSide().equalsIgnoreCase("buy")) {
 		        	tmpValue = (double) brokerTradingSummeryMapAll.get(tmpKey);
 		        }
 		        else {
 		        	tmpValue = 0 - (double) brokerTradingSummeryMapAll.get(tmpKey);
 		        }
-		        
+		        //System.out.println("value =  " + tmpValue);
 				if (brokerRankingMap.containsKey(rKey)) {
 					double sumTradedValue = (double) brokerRankingMap.get(rKey);
 					sumTradedValue += tmpValue;
 					brokerRankingMap.put(rKey, sumTradedValue);
+					//System.out.println("update :  " + rKey.getBroker());
 				}
 				else {
 					brokerRankingMap.put(rKey, tmpValue);
+					//System.out.println("add :  " + rKey.getBroker());
 				}
 		    }
 		    
+		    HashMap<BrokerTradeDateKey, Double> sortedMap = sortByValues(brokerRankingMap); 
+		    
+		    System.out.println("prepare to print report 3, broker trading ranking report, total rows : " + brokerRankingMap.size());
+	        
 		    int sheet3Count = 0;
 			workBook.insertSheets(1, 1);
 			workBook.setSheetName(1, "ranking report");
 			
-			workBook.setText(sheet2Count, 0, "Broker Ranking Report");
+			workBook.setText(sheet3Count, 0, "Broker Ranking Report");
 			sheet3Count++;
 			
 			workBook.setText(sheet3Count, 0, "Broker");
 			workBook.setText(sheet3Count, 1, "Trade Date");
-			workBook.setText(sheet3Count, 2, "Total Realized Gain");
+			workBook.setText(sheet3Count, 2, "Total Realized Gain (in Millions)");
 			
 			rangeStyle = workBook.getRangeStyle(0, 0, 1, 2);
             rangeStyle.setFontBold(true);
@@ -224,7 +257,7 @@ public class MTCreateReportThreadPool {
 			
 			//DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			
-			Iterator itR = brokerRankingMap.entrySet().iterator();
+			Iterator itR = sortedMap.entrySet().iterator();
 		    while (itR.hasNext()) {
 		    	sheet3Count++;
 		    	
@@ -232,10 +265,17 @@ public class MTCreateReportThreadPool {
 		        BrokerTradeDateKey btdKey = (BrokerTradeDateKey) pairs.getKey();
 		        workBook.setText(sheet3Count, 0,  btdKey.getBroker());
 		        workBook.setText(sheet3Count, 1,  format.format(btdKey.getTradeDate()));
-		        workBook.setNumber(sheet3Count, 3, (Double) pairs.getValue());
+		        workBook.setNumber(sheet3Count, 2, (Double) pairs.getValue() / 1000000);
 		        //it.remove(); // avoids a ConcurrentModificationException
 		    }
 		    
+		    System.out.println("report 3, broker trading ranking report, done ");
+	        
+		    System.out.println("prepare to print report 3 chart");
+	        
+		    //workBook.insertSheets(1, 1);
+			//workBook.setSheetName(1, "ranking report chart");
+			
 		    int left = 2;
 		    int top = 15;
 		    int right = 18;
@@ -247,7 +287,8 @@ public class MTCreateReportThreadPool {
 		    ChartShape chart = workBook.addChart(left, top, right, bottom);
 		    chart.setChartType(ChartShape.Column);
 		    //link data source, link each series to columns(true to rows).
-            chart.setLinkRange("aggregate report!$A$3:$F$"+sheet3Count,false);
+            chart.setLinkRange("ranking report!$A$3:$C$"+sheet3Count,false);
+            //chart.setYAxisCount(arg0);
             //set axis title
             chart.setAxisTitle(ChartShape.XAxis, 0, "X-axis Broker");
 			chart.setAxisTitle(ChartShape.YAxis, 0, "Y-axis Total Traded Value");
@@ -260,30 +301,49 @@ public class MTCreateReportThreadPool {
             //chart.set3Dimensional(true);
 
             //move chart sheet to index 1,index are from left to right,start from 0.
-            workBook.setSheet(1);
-            workBook.moveSheet(0);
+            //workBook.setSheet(1);
+            //workBook.moveSheet(0);
+            System.out.println("print report 3 chart done");
 		    
-			workBook.writeXLSX(reportFolder+reportFileName);
+			workBook.writeXLSX(reportFileName);
+			
+			System.out.println("All done");
 	        
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-//	public static void main(String[] args) {
-//		MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool("IronGeekCloudInputData.csv");
-//		mtCRThreadPool.loadFile();
-//		
-//	}
+	private static HashMap sortByValues(HashMap map) { 
+	       List list = new LinkedList(map.entrySet());
+	       // Defined Custom Comparator here
+	       Collections.sort(list, new Comparator() {
+	            public int compare(Object o1, Object o2) {
+	               return ((Comparable) ((Map.Entry) (o2)).getValue())
+	                  .compareTo(((Map.Entry) (o1)).getValue());
+	            }
+	       });
+	       
+	       // Here I am copying the sorted list in HashMap
+	       // using LinkedHashMap to preserve the insertion order
+	       HashMap sortedHashMap = new LinkedHashMap();
+	       for (Iterator it = list.iterator(); it.hasNext();) {
+	              Map.Entry entry = (Map.Entry) it.next();
+	              sortedHashMap.put(entry.getKey(), entry.getValue());
+	       } 
+	       return sortedHashMap;
+	  }
 }
 
 class CreateReportThread implements Runnable {
 	
-	String csvFile;
+	String csvFilename;
 	int startLine;
 	int endLine;
 	int id;
-	static List<String> lines;
+	String tmpReportFilename;
+	
+	static String[] lines;
 	static int fileRows;
 	
 	static String[] symbol;
@@ -306,17 +366,21 @@ class CreateReportThread implements Runnable {
 	static ArrayList<HashMap<BrokerTradeDateSideKey, Double>> brokerTradingSummeryMapList = new ArrayList<HashMap<BrokerTradeDateSideKey, Double>>(10);
 	
 	public CreateReportThread(String csv, int tid) throws IOException{ // , int start, int end
-		csvFile = csv;
+		csvFilename = csv;
 		id = tid;
+		tmpReportFilename = "tmp" + id + ".xlsx";
 		//startLine = start;
 		//endLine = end;
 		brokerTradingSummeryMapList.add(id, new HashMap<BrokerTradeDateSideKey, Double>());
 		
 		if(lines == null){
-			Path csvFile = Paths.get("IronGeekCloudInputData.csv");
-			lines = Files.readAllLines(csvFile, Charset.defaultCharset());
+			System.out.println("filename : " + csvFilename);
+			Path csvFile = Paths.get(csvFilename);
+			ArrayList<String> templines = (ArrayList<String>) Files.readAllLines(csvFile, Charset.defaultCharset());
+			lines = new String[templines.size()];
+			templines.toArray(lines);
 			
-			fileRows = lines.size() - 1;
+			fileRows = templines.size() - 1;
 			System.out.println("total lines : " + fileRows);
 			
 			symbol = new String[fileRows];
@@ -364,7 +428,7 @@ class CreateReportThread implements Runnable {
             for(int i = startLine; i <= endLine; ++ i){
             	//sheet1RowCount ++;
             
-            	String curLine = lines.get(i);
+            	String curLine = lines[i];
             	String[] row = curLine.split(cvsSplitBy);
             	
             	symbol[i-1] = row[0];
@@ -404,6 +468,34 @@ class CreateReportThread implements Runnable {
 				else {
 					brokerTradingSummeryMapList.get(id).put(btdsKey, tradedValue);
 				}
+				
+//				System.out.println("thread : " + id + " prepare to print report 1");
+//				
+//				int sheet1RowCount = 0;
+//				WorkBook workBook = new WorkBook();
+//				
+//				for (int j=0; j<CreateReportThread.fileRows; j++) {
+////		        	if (j % 10000 == 0) {
+////		        		System.out.println("print report 1 on row : " + j);
+////		        	}
+//		        	sheet1RowCount++;
+//		        	workBook.setText(sheet1RowCount, 0, symbol[j]);
+//					workBook.setNumber(sheet1RowCount, 1, shares[j]);
+//					workBook.setNumber(sheet1RowCount, 2, tradePrice[j]);
+//					workBook.setText(sheet1RowCount, 3, tradeDateStr[j]);
+//					workBook.setNumber(sheet1RowCount, 4, sharesOutstanding[j].longValue());
+//					workBook.setNumber(sheet1RowCount, 5, openPrice[j]);
+//					workBook.setNumber(sheet1RowCount, 7, avgDailyVolum[j].longValue());
+//					workBook.setText(sheet1RowCount, 8, side[j]);
+//					workBook.setText(sheet1RowCount, 9, broker[j]);
+//					workBook.setNumber(sheet1RowCount, 10, tradedValueAll[j]);
+//					workBook.setNumber(sheet1RowCount, 11, marketCapAll[j].doubleValue());
+//					workBook.setNumber(sheet1RowCount, 12, netRealizedGainOpenPriceAll[j]);
+//					workBook.setNumber(sheet1RowCount, 13, netRealizedGainClosePriceAll[j]);
+//		        }
+//				
+//				workBook.writeXLSX(tmpReportFilename);
+//				System.out.println("thread : " + id + " print report 1 done ");
             }
 		} catch (ParseException e) {
 			e.printStackTrace();

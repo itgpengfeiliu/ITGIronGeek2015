@@ -14,7 +14,6 @@ import javax.servlet.http.Part;
 
 import itg.opt.irongeek.util.FileProcessor;
 import itg.opt.irongeek.util.MTCreateReportThreadPool;
-import itg.opt.irongeek.util.ReadData;
 
 /**
  * Servlet implementation class Report
@@ -23,34 +22,22 @@ import itg.opt.irongeek.util.ReadData;
 public class ReportServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public ReportServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
 		
 		Set<String> filenames = getServletContext().getResourcePaths("/report/");
 	    // Actual logic goes here.
+		System.out.println("path = " + getServletContext().getRealPath("/data"));
 	    PrintWriter out = response.getWriter();
 	    for (String fn : filenames) {
 	    	out.println("<a href='/CloudComputingWeb" + fn + "' target='_blank'>" + fn + "</a><br />");
 	    }
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-//	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		// TODO Auto-generated method stub
-//	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//String description = request.getParameter("description"); // Retrieves <input type="text" name="description">
@@ -58,6 +45,7 @@ public class ReportServlet extends HttpServlet {
 	    String fileName = getFileName(filePart);
 	    String time = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 	    String newFileName = time + fileName;
+	    String reportFileName = "report" + time + fileName.substring(0, fileName.indexOf(".")) + ".xlsx";
 	    //System.out.println("Done : " + fileName);
 	    InputStream fileContent = filePart.getInputStream();
 	    // ... (do your job here)
@@ -69,7 +57,7 @@ public class ReportServlet extends HttpServlet {
             	//ReadData obj = new ReadData(getServletContext().getRealPath("/data")+"/"+newFileName, getServletContext().getRealPath("/report")+"/", "report"+newFileName+".xlsx");
         		//obj.run();
             	MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool(
-            			getServletContext().getRealPath("/data")+"/"+newFileName, getServletContext().getRealPath("/report")+"/", "report"+time+".xlsx");
+            			getServletContext().getRealPath("/data")+"/"+newFileName, getServletContext().getRealPath("/report")+"/"+reportFileName);
             	mtCRThreadPool.loadFile();
             	
             }

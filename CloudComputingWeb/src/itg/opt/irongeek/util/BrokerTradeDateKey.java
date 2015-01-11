@@ -59,9 +59,9 @@ public class BrokerTradeDateKey {
         }
         
         BrokerTradeDateKey other = (BrokerTradeDateKey) obj;
-        if (broker != other.broker || tradeDate.equals(other.tradeDate)) {
-            return false;
+        if (broker.equalsIgnoreCase(other.getBroker()) && tradeDate.compareTo(other.getTradeDate()) == 0) {
+            return true;
         }
-        return true;
+        return false;
     }
 }

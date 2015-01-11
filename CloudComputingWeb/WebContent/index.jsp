@@ -36,15 +36,82 @@
 	    });
 
 		$( "#defaultData" ).click( "click", function() {
+		      
 			 $.ajax({
 	       		  type: "POST",
 	       		  url: "/CloudComputingWeb/data",
-	       		  //enctype:"multipart/form-data",
-	       		  //data: formData,
-	       		  cache: false,
-	    	      contentType: false,
-	    	      processData: false,
-	              //dataType: "json",
+	       		  data: "filename=IronGeekCloudInputData.csv",
+	              dataType: "json",
+	         	  success: function (data) {
+	         		 alert("Go to Report page");
+	         	  },
+	  		      error: function(xhr, status, exception) {
+	  		      }
+		  	  });
+		});
+
+		$( "#default10Data" ).click( "click", function() {
+			 $.ajax({
+	       		  type: "POST",
+	       		  url: "/CloudComputingWeb/data",
+	       		  data: "filename=out_10_IronGeekCloudInputData.csv",
+	              dataType: "json",
+	         	  success: function (data) {
+	         		 alert("Go to Report page");
+	         	  },
+	  		      error: function(xhr, status, exception) {
+	  		      }
+		  	  });
+		});
+
+		$( "#default50Data" ).click( "click", function() {
+			 $.ajax({
+	       		  type: "POST",
+	       		  url: "/CloudComputingWeb/data",
+	       		  data: "filename=out_50_IronGeekCloudInputData.csv",
+	              dataType: "json",
+	         	  success: function (data) {
+	         		 alert("Go to Report page");
+	         	  },
+	  		      error: function(xhr, status, exception) {
+	  		      }
+		  	  });
+		});
+
+		$( "#default100Data" ).click( "click", function() {
+			 $.ajax({
+	       		  type: "POST",
+	       		  url: "/CloudComputingWeb/data",
+	       		  data: "filename=out_100_IronGeekCloudInputData.csv",
+	              dataType: "json",
+	         	  success: function (data) {
+	         		 alert("Go to Report page");
+	         	  },
+	  		      error: function(xhr, status, exception) {
+	  		      }
+		  	  });
+		});
+
+		$( "#default500Data" ).click( "click", function() {
+			 $.ajax({
+	       		  type: "POST",
+	       		  url: "/CloudComputingWeb/data",
+	       		  data: "filename=out_500_IronGeekCloudInputData.csv",
+	              dataType: "json",
+	         	  success: function (data) {
+	         		 alert("Go to Report page");
+	         	  },
+	  		      error: function(xhr, status, exception) {
+	  		      }
+		  	  });
+		});
+
+		$( "#default1000Data" ).click( "click", function() {
+			 $.ajax({
+	       		  type: "POST",
+	       		  url: "/CloudComputingWeb/data",
+	       		  data: "filename=out_1000_IronGeekCloudInputData.csv",
+	              dataType: "json",
 	         	  success: function (data) {
 	         		 alert("Go to Report page");
 	         	  },
@@ -53,7 +120,7 @@
 		  	  });
 		});
 	});
-	//gcloud compute copy-files CloudComputingWeb.zip instance-1:/home/lpf66fpl --zone us-central1-f
+	//gcloud compute copy-files ExplodeFile.class instance-1:/home/lpf66fpl --zone us-central1-f
 </script>
 </head>
 <body>
@@ -67,7 +134,18 @@
 <a href="/CloudComputingWeb/report" target="_blank">Report page</a>	
 <br /><br /><br />
 <a href="/CloudComputingWeb/data" target="_blank">Uploaded Data Files</a>
-<input id="defaultData" type="button" value="Use IronGeekCloudInputData.csv" />
 <br /><br /><br />
+<input id="defaultData" type="button" value="Use IronGeekCloudInputData.csv" />
+<br /><br />
+<input id="default10Data" type="button" value="Use out_10_IronGeekCloudInputData.csv" />
+<br /><br />
+<input id="default50Data" type="button" value="Use out_50_IronGeekCloudInputData.csv" />
+<br /><br />
+<input id="default100Data" type="button" value="Use out_100_IronGeekCloudInputData.csv" />
+<br /><br />
+<input id="default500Data" type="button" value="Use out_500_IronGeekCloudInputData.csv" />
+<br /><br />
+<input id="default1000Data" type="button" value="Use out_1000_IronGeekCloudInputData.csv" />
+<br /><br />
 </body>
 </html>

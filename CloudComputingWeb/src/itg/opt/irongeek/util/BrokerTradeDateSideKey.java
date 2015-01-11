@@ -60,7 +60,7 @@ public class BrokerTradeDateSideKey {
         }
         
         BrokerTradeDateSideKey other = (BrokerTradeDateSideKey) obj;
-        if (broker.equalsIgnoreCase(other.getBroker()) && side.equalsIgnoreCase(other.getSide())) {
+        if (broker.equalsIgnoreCase(other.getBroker()) && tradeDate.compareTo(other.getTradeDate()) == 0 && side.equalsIgnoreCase(other.getSide())) {
             return true;
         }
         return false;

@@ -1,7 +1,6 @@
 package itg.opt.irongeek;
 
-import itg.opt.irongeek.util.ReadData;
-
+import itg.opt.irongeek.util.MTCreateReportThreadPool;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -20,18 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/SourceDataServlet")
 public class SourceDataServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    
     public SourceDataServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.setContentType("text/html");
@@ -44,14 +37,13 @@ public class SourceDataServlet extends HttpServlet {
 	    }
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		String filename = request.getParameter("filename");
+		System.out.println("filename : " + filename);
 		String time = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-		ReadData obj = new ReadData(getServletContext().getRealPath("/data")+"/IronGeekCloudInputData.csv", getServletContext().getRealPath("/report")+"/", "report"+time+"IronGeekCloudInputData.xlsx");
-		obj.run();
+		String reportF = "report" + time + filename.substring(0, filename.indexOf(".")) + ".xlsx";
+		MTCreateReportThreadPool obj = new MTCreateReportThreadPool(getServletContext().getRealPath("/data")+"/"+filename, getServletContext().getRealPath("/report")+"/"+reportF);
+		obj.loadFile();
 	}
 
 }
