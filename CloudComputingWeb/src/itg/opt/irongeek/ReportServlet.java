@@ -57,7 +57,9 @@ public class ReportServlet extends HttpServlet {
             	//ReadData obj = new ReadData(getServletContext().getRealPath("/data")+"/"+newFileName, getServletContext().getRealPath("/report")+"/", "report"+newFileName+".xlsx");
         		//obj.run();
             	MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool(
-            			getServletContext().getRealPath("/data")+"/"+newFileName, getServletContext().getRealPath("/report")+"/"+reportFileName);
+            			getServletContext().getRealPath("/data")+"/"+newFileName, 
+            			getServletContext().getRealPath("/report")+"/"+reportFileName,
+            			getServletContext().getRealPath("/tmp")+"/");
             	mtCRThreadPool.loadFile();
             	
             }

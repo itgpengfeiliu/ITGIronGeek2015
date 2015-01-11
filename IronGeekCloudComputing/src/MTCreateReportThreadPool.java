@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,9 +36,20 @@ import com.smartxls.RangeStyle;
 import com.smartxls.WorkBook;
 
 public class MTCreateReportThreadPool {
+	// gcloud compute copy-files CloudComputingWeb.war  instance-3:/home/lpf66fpl --zone us-central1-f 
+	// gcloud compute copy-files ExplodeFile.class  instance-3:/home/lpf66fpl --zone us-central1-f
+	// gcloud compute copy-files IronGeekCloudInputData.csv  instance-3:/home/lpf66fpl --zone us-central1-f
+	// gcloud compute copy-files cloudcomputingapp.jar  instance-3:/home/lpf66fpl --zone us-central1-f
 	
+	// gcloud compute copy-files CloudComputingWeb.war  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
+	// gcloud compute copy-files ExplodeFile.class  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
+	// gcloud compute copy-files IronGeekCloudInputData.csv  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
+	// gcloud compute copy-files cloudcomputingapp.jar  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
+	// sudo java ExplodeFile
+	// sudo java -jar cloudcomputingapp.jar out_10_IronGeekCloudInputData.csv out_10_IronGeekCloudReport.xlsx
 	private String csvFileName = "IronGeekCloudInputData.csv";
 	private String reportFileName = "IronGeekCloudReport.xlsx";
+	private String tmpFolder = "";
 	
 	private HashMap<BrokerTradeDateSideKey, Double> brokerTradingSummeryMapAll;
 	
@@ -49,26 +61,32 @@ public class MTCreateReportThreadPool {
 			mtCRThreadPool.loadFile();
 		}
 		else {
-			MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool(args[0], args[1]);
+			MTCreateReportThreadPool mtCRThreadPool = new MTCreateReportThreadPool(args[0], args[1], "");
 			mtCRThreadPool.loadFile();
 		}
 		
 	}
 	
-	public MTCreateReportThreadPool(String csvFile, String reportFile) {
+	public MTCreateReportThreadPool(String csvFile, String reportFile, String tmpPath) {
 		this.csvFileName = csvFile;
 		this.reportFileName = reportFile;
+		this.tmpFolder = tmpPath;
+		System.out.println("csv : " + this.csvFileName + " , report : " + this.reportFileName + " , tmp : " + this.tmpFolder);
 	}
 	
 	public MTCreateReportThreadPool() {
 	}
 	
 	public void loadFile() {
+		CreateReportThread.lines = null;
+		CreateReportThread.fileRows = 0;
+		CreateReportThread.brokerTradingSummeryMapList = new ArrayList<HashMap<BrokerTradeDateSideKey, Double>>(10);
+		
 		List<Thread> allThread = new ArrayList<Thread>();
 		for(int i = 0; i < 10; ++ i){
 			CreateReportThread cr;
 			try {
-				cr = new CreateReportThread(csvFileName, i); // , i * 1000 + 1, i * 1000 + 1001
+				cr = new CreateReportThread(this.csvFileName, i, this.tmpFolder); // , i * 1000 + 1, i * 1000 + 1001
 				Thread th = new Thread(cr);
 				allThread.add(th);
 				th.start();
@@ -102,7 +120,7 @@ public class MTCreateReportThreadPool {
 		    long fSize;
     	    MappedByteBuffer mBuf;
     	    
-    	    String outFileName = "tmp_all.csv";
+    	    String outFileName = tmpFolder + "tmp_all.csv";
     	    fOut = new FileOutputStream(outFileName, false);
     	    //fOut.write("");
     	    fOut.close();
@@ -114,7 +132,7 @@ public class MTCreateReportThreadPool {
 //    	    	fIChans[i] = fIns[i].getChannel();
 //    	    	fSizes[i] = fIChans[i].size();
     	    	
-    	    	fIn = new FileInputStream("tmp" + i + ".csv");
+    	    	fIn = new FileInputStream(tmpFolder + "tmp" + i + ".csv");
     	    	fIChan = fIn.getChannel();
     	    	fSize = fIChan.size();
     	    	
@@ -129,7 +147,7 @@ public class MTCreateReportThreadPool {
 	        fOChan.close();
 	        fOut.close();
     	    
-	        workBook.read("tmp_all.csv");
+	        workBook.read(tmpFolder + "tmp_all.csv");
 	        
 	        workBook.setSheetName(0, "Report");
 			
@@ -385,7 +403,7 @@ public class MTCreateReportThreadPool {
 
 class CreateReportThread implements Runnable {
 	
-	private String csvFilename;
+	private String csvFile;
 	private int startLine;
 	private int endLine;
 	private int id;
@@ -412,20 +430,20 @@ class CreateReportThread implements Runnable {
 	double[] netRealizedGainOpenPriceAll;
 	double[] netRealizedGainClosePriceAll;
 	
-	static ArrayList<HashMap<BrokerTradeDateSideKey, Double>> brokerTradingSummeryMapList = new ArrayList<HashMap<BrokerTradeDateSideKey, Double>>(10);
+	static ArrayList<HashMap<BrokerTradeDateSideKey, Double>> brokerTradingSummeryMapList;
 	
-	public CreateReportThread(String csv, int tid) throws IOException{ // , int start, int end
-		csvFilename = csv;
-		id = tid;
-		tmpReportFilename = "tmp" + id + ".csv";
+	public CreateReportThread(String csv, int tid, String tmpFolder) throws IOException{ // , int start, int end
+		this.csvFile = csv;
+		this.id = tid;
+		this.tmpReportFilename = tmpFolder + "tmp" + id + ".csv";
 		//startLine = start;
 		//endLine = end;
 		brokerTradingSummeryMapList.add(id, new HashMap<BrokerTradeDateSideKey, Double>());
 		
 		if(lines == null){
-			System.out.println("filename : " + csvFilename);
-			Path csvFile = Paths.get(csvFilename);
-			ArrayList<String> templines = (ArrayList<String>) Files.readAllLines(csvFile, Charset.defaultCharset());
+			System.out.println("if lines==null, filename : " + this.csvFile);
+			Path csvFilePath = Paths.get(this.csvFile);
+			ArrayList<String> templines = (ArrayList<String>) Files.readAllLines(csvFilePath, Charset.defaultCharset());
 			lines = new String[templines.size()];
 			templines.toArray(lines);
 			
@@ -487,7 +505,7 @@ class CreateReportThread implements Runnable {
 		
 		
 		try {
-			FileWriter writer = new FileWriter(tmpReportFilename, false);
+			FileWriter writer = new FileWriter(this.tmpReportFilename, false);
 			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 			            
 			for(int i = startLine; i <= endLine; ++ i){

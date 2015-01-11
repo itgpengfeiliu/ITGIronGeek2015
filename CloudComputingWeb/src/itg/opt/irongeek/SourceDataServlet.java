@@ -39,10 +39,13 @@ public class SourceDataServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String filename = request.getParameter("filename");
-		System.out.println("filename : " + filename);
+		System.out.println("doPost filename : " + filename);
 		String time = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 		String reportF = "report" + time + filename.substring(0, filename.indexOf(".")) + ".xlsx";
-		MTCreateReportThreadPool obj = new MTCreateReportThreadPool(getServletContext().getRealPath("/data")+"/"+filename, getServletContext().getRealPath("/report")+"/"+reportF);
+		MTCreateReportThreadPool obj = new MTCreateReportThreadPool(
+				getServletContext().getRealPath("/data")+"/"+filename, 
+				getServletContext().getRealPath("/report")+"/"+reportF,
+				getServletContext().getRealPath("/tmp")+"/");
 		obj.loadFile();
 	}
 
