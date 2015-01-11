@@ -1,6 +1,15 @@
 Google Cloud
+gcloud compute copy-files cloudcomputingapp.jar instance-2:/home/lpf66fpl --zone us-central1-f
+
+sudo apt-get update
+sudo apt-get install default-jre
+sudo apt-get install default-jdk
+sudo update-alternatives --config java
+
+sudo apt-get install tomcat7
 
 The Cloud SDK for Java requires Java 1.7+ and Python 2.7.x.
+
 
 instance: open a browser window
 sudo apt-get install apache2
