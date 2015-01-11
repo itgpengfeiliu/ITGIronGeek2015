@@ -4,7 +4,6 @@ import java.util.Date;
 public class BrokerTradeDateKey {
 
 	private Date tradeDate;
-	//private String tradeDateStr;
 	private String broker;
 	
 	public BrokerTradeDateKey(String broker, Date tradeDate) {

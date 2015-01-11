@@ -21,32 +21,32 @@ import com.smartxls.WorkBook;
 
 public class MTCreateReport {
 
-	public static void main(String[] args) {
-		List<Thread> allThread = new ArrayList<Thread>();
-		for(int i = 0; i < 10; ++ i){
-			CreateReport cr;
-			try {
-				cr = new CreateReport("IronGeekCloudInputData.csv", i * 1000 + 1, i * 1000 + 1001);
-				Thread th = new Thread(cr);
-				allThread.add(th);
-				th.start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		for(int i = 0; i < 10; ++ i){
-			try {
-				allThread.get(i).join();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		//System.out.print(Arrays.toString(CreateReport.tradedValueAll));
-		//System.out.print(Arrays.toString(CreateReport.marketCapAll));
-		//System.out.print(Arrays.toString(CreateReport.netRealizedGainOpenPriceAll));
-		System.out.print(Arrays.toString(CreateReport.netRealizedGainClosePriceAll));
-	}
+//	public static void main(String[] args) {
+//		List<Thread> allThread = new ArrayList<Thread>();
+//		for(int i = 0; i < 10; ++ i){
+//			CreateReport cr;
+//			try {
+//				cr = new CreateReport("IronGeekCloudInputData.csv", i * 1000 + 1, i * 1000 + 1001);
+//				Thread th = new Thread(cr);
+//				allThread.add(th);
+//				th.start();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		for(int i = 0; i < 10; ++ i){
+//			try {
+//				allThread.get(i).join();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+//		//System.out.print(Arrays.toString(CreateReport.tradedValueAll));
+//		//System.out.print(Arrays.toString(CreateReport.marketCapAll));
+//		//System.out.print(Arrays.toString(CreateReport.netRealizedGainOpenPriceAll));
+//		System.out.print(Arrays.toString(CreateReport.netRealizedGainClosePriceAll));
+//	}
 	public static void f(){
 		Path csvFile = Paths.get("IronGeekCloudInputData.csv");
 		try {

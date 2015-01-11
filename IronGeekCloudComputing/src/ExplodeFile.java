@@ -6,15 +6,15 @@ import java.nio.channels.FileChannel;
 
 public class ExplodeFile {
 	
-	public static void main(String[] args) {
-		//explode("IronGeekCloudInputData.csv", 10);
-		//explode("IronGeekCloudInputData.csv", 50);
-		//explode("IronGeekCloudInputData.csv", 100);
-		//explode("IronGeekCloudInputData.csv", 500);
-		//explode("IronGeekCloudInputData.csv", 1000);
-		explode("IronGeekCloudReport.xlsx", 10);
-
-	}
+//	public static void main(String[] args) {
+//		//explode("IronGeekCloudInputData.csv", 10);
+//		//explode("IronGeekCloudInputData.csv", 50);
+//		//explode("IronGeekCloudInputData.csv", 100);
+//		//explode("IronGeekCloudInputData.csv", 500);
+//		//explode("IronGeekCloudInputData.csv", 1000);
+//		//explode("IronGeekCloudReport.xlsx", 10);
+//
+//	}
 	public static void explode(String inputfile, int times){
 		FileInputStream fIn;
 	    FileOutputStream fOut;

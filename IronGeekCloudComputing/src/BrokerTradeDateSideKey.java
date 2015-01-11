@@ -4,7 +4,6 @@ import java.util.Date;
 public class BrokerTradeDateSideKey {
 
 	private Date tradeDate;
-	//private String tradeDateStr;
 	private String broker;
 	private String side;
 	

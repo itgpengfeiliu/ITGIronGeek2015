@@ -247,9 +247,9 @@ public class ReadData {
 	}
 
 	
-	public static void main(String[] args) {
-		ReadData obj = new ReadData();
-		obj.run();
-	}
+//	public static void main(String[] args) {
+//		ReadData obj = new ReadData();
+//		obj.run();
+//	}
 
 }
