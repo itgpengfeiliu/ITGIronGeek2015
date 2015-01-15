@@ -39,7 +39,8 @@ public class MTCreateReportThreadPool {
 	// gcloud compute copy-files CloudComputingWeb.war  instance-3:/home/lpf66fpl --zone us-central1-f 
 	// gcloud compute copy-files ExplodeFile.class  instance-3:/home/lpf66fpl --zone us-central1-f
 	// gcloud compute copy-files IronGeekCloudInputData.csv  instance-3:/home/lpf66fpl --zone us-central1-f
-	// gcloud compute copy-files cloudcomputingapp.jar  instance-3:/home/lpf66fpl --zone us-central1-f
+	
+	// gcloud compute copy-files cloudcomputingapp.jar  instance-group-5-j6us:/home/lpf66fpl --zone europe-west1-c
 	
 	// gcloud compute copy-files CloudComputingWeb.war  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
 	// gcloud compute copy-files ExplodeFile.class  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
@@ -47,7 +48,8 @@ public class MTCreateReportThreadPool {
 	// gcloud compute copy-files cloudcomputingapp.jar  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
 	// sudo java ExplodeFile
 	
-	// sudo java -Xmx8G -jar cloudcomputingapp.jar out_500_IronGeekCloudInputData.csv out_500
+	// gcloud compute copy-files instance-group-2-yija:report_out_500_IronGeekCloudInputReport_part1.csv report_part1.csv --zone us-central1-f
+	// sudo java -Xmx10G -jar cloudcomputingapp.jar out_500_IronGeekCloudInputData.csv out_500
 	private String csvFileName = "IronGeekCloudInputData.csv";
 	private String reportPart2 = "report_part2.xlsx";
 	private String reportPart1 = "report_part1.csv";
