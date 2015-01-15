@@ -46,9 +46,11 @@ public class MTCreateReportThreadPool {
 	// gcloud compute copy-files IronGeekCloudInputData.csv  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
 	// gcloud compute copy-files cloudcomputingapp.jar  instance-group-2-yija:/home/lpf66fpl --zone us-central1-f
 	// sudo java ExplodeFile
-	// sudo java -jar cloudcomputingapp.jar out_10_IronGeekCloudInputData.csv out_10_IronGeekCloudReport.xlsx
+	
+	// sudo java -Xmx8G -jar cloudcomputingapp.jar out_500_IronGeekCloudInputData.csv out_500
 	private String csvFileName = "IronGeekCloudInputData.csv";
-	private String reportFileName = "IronGeekCloudReport.xlsx";
+	private String reportPart2 = "report_part2.xlsx";
+	private String reportPart1 = "report_part1.csv";
 	private String tmpFolder = "";
 	
 	private HashMap<BrokerTradeDateSideKey, Double> brokerTradingSummeryMapAll;
@@ -69,9 +71,10 @@ public class MTCreateReportThreadPool {
 	
 	public MTCreateReportThreadPool(String csvFile, String reportFile, String tmpPath) {
 		this.csvFileName = csvFile;
-		this.reportFileName = reportFile;
+		this.reportPart2 = "report_" + reportFile + "_part2.xlsx";
+		this.reportPart1 = "report_" + reportFile + "_part1.csv";
 		this.tmpFolder = tmpPath;
-		System.out.println("csv : " + this.csvFileName + " , report : " + this.reportFileName + " , tmp : " + this.tmpFolder);
+		System.out.println("csv : " + this.csvFileName + " , report : " + this.reportPart1 +" , " + this.reportPart2 + " , tmp : " + this.tmpFolder);
 	}
 	
 	public MTCreateReportThreadPool() {
@@ -120,7 +123,7 @@ public class MTCreateReportThreadPool {
 		    long fSize;
     	    MappedByteBuffer mBuf;
     	    
-    	    String outFileName = tmpFolder + "tmp_all.csv";
+    	    String outFileName = tmpFolder + reportPart1;
     	    fOut = new FileOutputStream(outFileName, false);
     	    //fOut.write("");
     	    fOut.close();
@@ -147,9 +150,9 @@ public class MTCreateReportThreadPool {
 	        fOChan.close();
 	        fOut.close();
     	    
-	        workBook.read(tmpFolder + "tmp_all.csv");
+	        //workBook.read(tmpFolder + "tmp_all.csv");
 	        
-	        workBook.setSheetName(0, "Report");
+	        //workBook.setSheetName(0, "Report");
 			
 //	        workBook.setText(sheet1RowCount, 0, "Symbol");
 //			workBook.setText(sheet1RowCount, 1, "Shares");
@@ -166,26 +169,26 @@ public class MTCreateReportThreadPool {
 //			workBook.setText(sheet1RowCount, 12, "Net Realized Gain vs. Open Price");
 //			workBook.setText(sheet1RowCount, 13, "Net Realized Gain vs. Close Price");
 			
-			RangeStyle rangeStyle = workBook.getRangeStyle(0, 0, 0, 13);
-	        rangeStyle.setFontBold(true);
-	        workBook.setRangeStyle(rangeStyle, 0, 0, 0, 13);
-	        
-	        workBook.setColWidth(0, 10*256);
-	        workBook.setColWidth(1, 12*256);
-	        workBook.setColWidth(2, 15*256);
-	        workBook.setColWidth(3, 12*256);
-	        workBook.setColWidth(4, 15*256);
-	        workBook.setColWidth(5, 12*256);
-	        workBook.setColWidth(6, 12*256);
-	        workBook.setColWidth(7, 15*256);
-	        workBook.setColWidth(8, 8*256);
-	        workBook.setColWidth(9, 10*256);
-	        workBook.setColWidth(10, 15*256);
-	        workBook.setColWidth(11, 20*256);
-	        workBook.setColWidth(12, 20*256);
-	        workBook.setColWidth(13, 20*256);
-	        
-	        //move chart sheet to index 1,index are from left to right,start from 0.
+//			RangeStyle rangeStyle = workBook.getRangeStyle(0, 0, 0, 13);
+//	        rangeStyle.setFontBold(true);
+//	        workBook.setRangeStyle(rangeStyle, 0, 0, 0, 13);
+//	        
+//	        workBook.setColWidth(0, 10*256);
+//	        workBook.setColWidth(1, 12*256);
+//	        workBook.setColWidth(2, 15*256);
+//	        workBook.setColWidth(3, 12*256);
+//	        workBook.setColWidth(4, 15*256);
+//	        workBook.setColWidth(5, 12*256);
+//	        workBook.setColWidth(6, 12*256);
+//	        workBook.setColWidth(7, 15*256);
+//	        workBook.setColWidth(8, 8*256);
+//	        workBook.setColWidth(9, 10*256);
+//	        workBook.setColWidth(10, 15*256);
+//	        workBook.setColWidth(11, 20*256);
+//	        workBook.setColWidth(12, 20*256);
+//	        workBook.setColWidth(13, 20*256);
+//	        
+//	        //move chart sheet to index 1,index are from left to right,start from 0.
             //workBook.setSheet(1);
             //workBook.moveSheet(0);
 	        
@@ -208,7 +211,7 @@ public class MTCreateReportThreadPool {
 //				workBook.setNumber(sheet1RowCount, 12, CreateReportThread.netRealizedGainOpenPriceAll[j]);
 //				workBook.setNumber(sheet1RowCount, 13, CreateReportThread.netRealizedGainClosePriceAll[j]);
 //	        }
-	        System.out.println("report 1 print done");
+	        //System.out.println("report 1 print done");
 	        
 	        
 	        brokerTradingSummeryMapAll = new HashMap<BrokerTradeDateSideKey, Double>();
@@ -237,8 +240,8 @@ public class MTCreateReportThreadPool {
 	        System.out.println("prepare to print report 2, broker trading summary report, total rows : " + brokerTradingSummeryMapAll.size());
 	        
 	        int sheet2Count = 0;
-			workBook.insertSheets(1, 1);
-			workBook.setSheetName(1, "aggregate report");
+			workBook.insertSheets(0, 1);
+			workBook.setSheetName(0, "aggregate report");
 			
 			workBook.setText(sheet2Count, 0, "Broker Trading Summary");
 			sheet2Count++;
@@ -248,7 +251,7 @@ public class MTCreateReportThreadPool {
 			workBook.setText(sheet2Count, 2, "Side");
 			workBook.setText(sheet2Count, 3, "Total Traded Value (in Millions)");
 			
-			rangeStyle = workBook.getRangeStyle(0, 0, 1, 3);
+			RangeStyle rangeStyle = workBook.getRangeStyle(0, 0, 1, 3);
             rangeStyle.setFontBold(true);
             workBook.setRangeStyle(rangeStyle, 0, 0, 1, 3);
             
@@ -371,7 +374,7 @@ public class MTCreateReportThreadPool {
             
             System.out.println("print report 3 chart done");
 		    
-			workBook.writeXLSX(reportFileName);
+			workBook.writeXLSX(reportPart2);
 			
 			System.out.println("All done");
 	        
